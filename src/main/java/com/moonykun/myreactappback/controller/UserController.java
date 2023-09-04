@@ -1,7 +1,7 @@
 package com.moonykun.myreactappback.controller;
 
 import com.moonykun.myreactappback.dto.UserDTO;
-import com.moonykun.myreactappback.server.UserService;
+import com.moonykun.myreactappback.server.impl.UserServerImpl;
 import com.moonykun.myreactappback.vo.UserQueryVO;
 import com.moonykun.myreactappback.vo.UserUpdateVO;
 import com.moonykun.myreactappback.vo.UserVO;
@@ -22,31 +22,31 @@ import javax.validation.Valid;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserServerImpl userServerImpl;
 
     @PostMapping
     public String save(@Valid @RequestBody UserVO vO) {
-        return userService.save(vO).toString();
+        return userServerImpl.save(vO).toString();
     }
 
     @DeleteMapping("/{id}")
     public void delete(@Valid @NotNull @PathVariable("id") Long id) {
-        userService.delete(id);
+        userServerImpl.delete(id);
     }
 
     @PutMapping("/{id}")
     public void update(@Valid @NotNull @PathVariable("id") Long id,
                        @Valid @RequestBody UserUpdateVO vO) {
-        userService.update(id, vO);
+        userServerImpl.update(id, vO);
     }
 
     @GetMapping("/{id}")
     public UserDTO getById(@Valid @NotNull @PathVariable("id") Long id) {
-        return userService.getById(id);
+        return userServerImpl.getById(id);
     }
 
     @GetMapping
     public Page<UserDTO> query(@Valid UserQueryVO vO) {
-        return userService.query(vO);
+        return userServerImpl.query(vO);
     }
 }

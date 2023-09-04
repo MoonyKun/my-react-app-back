@@ -4,9 +4,21 @@ server:
 spring:
   application:
     name: user-center
+
   datasource:
     username: root
     password: 123456
     url: jdbc:mysql://localhost:3306/laydb?serverTimezone=GMT%2B8
     driver-class-name: com.mysql.cj.jdbc.Driver
+# JPA
+  jpa:
+    hibernate:
+      ddl-auto: update #自动更新
+    show-sql: true  #日志中显示sql语句
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+    throw-exception-if-no-handler-found: true
 
