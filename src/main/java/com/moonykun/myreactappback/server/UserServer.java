@@ -16,4 +16,14 @@ public interface UserServer {
     void update(Long id, UserUpdateVO vO);
     UserDTO getById(Long id);
     Page<UserDTO> query(UserQueryVO vO);
+
+    /**
+     *
+     * 用户注册
+     * @param userAccount 用户账号
+     * @param userPassword 用户密码
+     * @param checkPassword 密码校验
+     * @return 新用户id
+     */
+    long userRegister(String userAccount,String userPassword,String checkPassword);
 }

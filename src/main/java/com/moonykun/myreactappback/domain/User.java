@@ -71,7 +71,7 @@ public class User implements Serializable {
      * 状态 0 - 正常
      */
     @Column(name = "userStatus", nullable = false)
-    private Integer userStatus;
+    private Integer userStatus=0;
 
     /**
      * 创建时间
@@ -86,13 +86,13 @@ public class User implements Serializable {
      * 是否删除
      */
     @Column(name = "isDelete", nullable = false)
-    private Integer isDelete;
+    private Integer isDelete =0;
 
     /**
      * 用户角色 0 - 普通用户 1 - 管理员
      */
     @Column(name = "userRole", nullable = false)
-    private Integer userRole;
+    private Integer userRole=0;
 
     /**
      * 星球编号

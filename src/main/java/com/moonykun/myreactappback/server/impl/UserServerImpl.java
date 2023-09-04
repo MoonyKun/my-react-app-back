@@ -7,12 +7,20 @@ import com.moonykun.myreactappback.server.UserServer;
 import com.moonykun.myreactappback.vo.UserQueryVO;
 import com.moonykun.myreactappback.vo.UserUpdateVO;
 import com.moonykun.myreactappback.vo.UserVO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
+import org.springframework.util.MimeType;
 
+import javax.persistence.criteria.*;
 import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Moonykun
@@ -52,6 +60,45 @@ public class UserServerImpl implements UserServer {
     @Override
     public Page<UserDTO> query(UserQueryVO vO) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+        // 校验
+        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
+            return -1;
+        }
+        if (userAccount.length() < 4) {
+            return -1;
+        }
+        if (userPassword.length() < 8 || checkPassword.length() < 8) {
+            return -1;
+        }
+        String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+        Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
+        if (matcher.find()) {
+            return -1;
+        }
+        Specification<User> userSpecification = (root, criteriaQuery, criteriaBuilder) -> {
+            Path<Object> username = root.get("userAccount");
+            return criteriaBuilder.equal(username.as(String.class), userAccount);
+        };
+        long count = userRepository.count(userSpecification);
+        if (count > 0) {
+            return -1;
+        }
+        if (!userPassword.equals(checkPassword)) {
+            return -1;
+        }
+        // 密码加密
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String encode = bCryptPasswordEncoder.encode(userPassword);
+        // 保存数据
+        User user = new User();
+        user.setUserAccount(userAccount);
+        user.setUserPassword(userPassword);
+        userRepository.save(user);
+        return 0;
     }
 
     private UserDTO toDTO(User original) {
